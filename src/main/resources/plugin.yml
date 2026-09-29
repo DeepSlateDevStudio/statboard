@@ -1,0 +1,26 @@
+name: StatBoard
+main: deepslatedev.statboard.StatBoard
+version: "1.0.0"
+api: ["3.0.0"]
+author: Hollowseam
+description: Player stats, leaderboards and floating text leaderboards
+website: https://github.com/DeepSlateDevStudio/statboard
+softdepend: [LlamaEconomy, EconomyAPI, FrenchEconomy]
+commands:
+  stats:
+    description: Show player stats or manage floating leaderboards
+    usage: "/stats [player] | hologram <category|remove> | reload"
+    aliases: [statistics]
+    permission: statboard.use
+  top:
+    description: Show a leaderboard
+    usage: "/top [category]"
+    aliases: [leaderboard, leaderboards]
+    permission: statboard.use
+permissions:
+  statboard.use:
+    description: See stats and leaderboards
+    default: true
+  statboard.admin:
+    description: Create and remove floating leaderboards
+    default: op

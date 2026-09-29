@@ -1,0 +1,47 @@
+leaderboard-size: 10
+hologram-size: 10
+hologram-refresh-seconds: 30
+save-interval-seconds: 60
+kdr-min-kills: 10
+command-delay-ticks: 10
+categories:
+  kills: true
+  deaths: true
+  kdr: true
+  mobs: true
+  broken: true
+  placed: true
+  playtime: true
+  streak: true
+  balance: true
+messages:
+  prefix: "§bStats §8» §r"
+  currency: "{amount}$"
+  category-kills: "Kills"
+  category-deaths: "Deaths"
+  category-kdr: "K/D Ratio"
+  category-mobs: "Mobs Killed"
+  category-broken: "Blocks Broken"
+  category-placed: "Blocks Placed"
+  category-playtime: "Playtime"
+  category-streak: "Best Kill Streak"
+  category-balance: "Richest Players"
+  stats-title: "Stats of {player}"
+  stat-entry: "§f{category}: §e{value}"
+  stat-click: "§7Click to see the leaderboard"
+  top-title: "Top {category}"
+  top-line: "§6#{rank} §f{player} §7- §e{value}"
+  top-empty: "§7Nobody is ranked yet."
+  top-you: "§7Your rank: §f#{rank} §7(§e{value}§7)"
+  top-you-none: "§7You are not ranked yet."
+  top-switch: "§b{category}"
+  hologram-title: "§6§l{category}"
+  hologram-line: "§6{rank}. §f{player} §7{value}"
+  hologram-empty: "§7No one yet"
+  hologram-created: "§aFloating leaderboard for §f{category} §acreated here."
+  hologram-removed: "§aFloating leaderboard removed."
+  hologram-none: "§cNo floating leaderboard within 5 blocks."
+  unknown-category: "§cUnknown category. Categories: §f{categories}"
+  unknown-player: "§c{player} has no stats yet."
+  reloaded: "§7Configuration reloaded."
+  players-only: "§cOnly players can do this."
