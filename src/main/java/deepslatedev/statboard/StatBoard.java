@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public final class StatBoard extends PluginBase implements Listener {
     static final List<String> ALL = List.of("kills", "deaths", "kdr", "mobs", "broken", "placed", "playtime", "streak", "balance");
@@ -259,12 +260,20 @@ public final class StatBoard extends PluginBase implements Listener {
         body.append('\n').append(msg("stat-click"));
         SimpleForm form = new SimpleForm(msg("stats-title", "player", name), body.toString());
         for (String category : categories()) {
-            form.addButton(msg("top-switch", "category", categoryName(category)), p -> openTop(p, category, target));
+            form.addButton(msg("top-switch", "category", categoryName(category)), p -> openTop(p, category, back -> openStats(back, target)));
         }
         form.send(viewer);
     }
 
-    private void openTop(Player player, String category, String backTo) {
+    private void openTopMenu(Player player) {
+        SimpleForm form = new SimpleForm(msg("top-menu-title"), msg("top-menu-body"));
+        for (String category : categories()) {
+            form.addButton(msg("top-switch", "category", categoryName(category)), p -> openTop(p, category, this::openTopMenu));
+        }
+        form.send(player);
+    }
+
+    private void openTop(Player player, String category, Consumer<Player> back) {
         List<Map.Entry<String, Double>> ranking = ranking(category);
         int size = Math.max(1, getConfig().getInt("leaderboard-size", 10));
         StringBuilder body = new StringBuilder();
@@ -283,9 +292,7 @@ public final class StatBoard extends PluginBase implements Listener {
         }
         body.append("\n").append(rank > 0 ? msg("top-you", "rank", rank, "value", format(category, ranking.get(rank - 1).getValue())) : msg("top-you-none"));
         SimpleForm form = new SimpleForm(msg("top-title", "category", categoryName(category)), body.toString());
-        if (backTo != null) {
-            form.addButton(msg("top-back"), p -> openStats(p, backTo));
-        }
+        form.addButton(msg("top-back"), back);
         form.send(player);
     }
 
@@ -304,12 +311,16 @@ public final class StatBoard extends PluginBase implements Listener {
                 sender.sendMessage(prefixed("players-only"));
                 return true;
             }
-            String category = args.length > 0 ? args[0].toLowerCase(Locale.ROOT) : categories().get(0);
+            if (args.length == 0) {
+                delayed(player, () -> openTopMenu(player));
+                return true;
+            }
+            String category = args[0].toLowerCase(Locale.ROOT);
             if (!categories().contains(category)) {
                 player.sendMessage(prefixed("unknown-category", "categories", String.join(", ", categories())));
                 return true;
             }
-            delayed(player, () -> openTop(player, category, null));
+            delayed(player, () -> openTop(player, category, this::openTopMenu));
             return true;
         }
         String sub = args.length > 0 ? args[0].toLowerCase(Locale.ROOT) : "";
