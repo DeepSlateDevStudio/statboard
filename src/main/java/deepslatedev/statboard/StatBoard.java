@@ -16,25 +16,18 @@ import org.powernukkitx.event.entity.EntityLevelChangeEvent;
 import org.powernukkitx.event.player.PlayerDeathEvent;
 import org.powernukkitx.event.player.PlayerJoinEvent;
 import org.powernukkitx.form.window.SimpleForm;
-import org.powernukkitx.item.Item;
 import org.powernukkitx.plugin.PluginBase;
 import org.powernukkitx.utils.Config;
-import org.powernukkitx.utils.TextFormat;
 
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public final class StatBoard extends PluginBase implements Listener {
     static final List<String> ALL = List.of("kills", "deaths", "kdr", "mobs", "broken", "placed", "playtime", "streak", "balance");
-    private static final Map<String, String> ICONS = Map.of(
-            "kills", "diamond_sword", "deaths", "skeleton_skull", "kdr", "golden_sword", "mobs", "rotten_flesh",
-            "broken", "iron_pickaxe", "placed", "bricks", "playtime", "clock", "streak", "blaze_powder", "balance", "gold_ingot");
-
     private Config stats;
     private Economy economy;
     private Holograms holograms;
@@ -255,43 +248,20 @@ public final class StatBoard extends PluginBase implements Listener {
         }
     }
 
-    private Item icon(String category, String line) {
-        String id = ICONS.getOrDefault(category, "paper");
-        Item item = Item.get("minecraft:" + id);
-        if (item == null || item.isNull()) {
-            item = Item.get("minecraft:paper");
-        }
-        item.setCustomName(TextFormat.RESET + line);
-        item.setLore(TextFormat.RESET + msg("stat-click"));
-        return item;
-    }
-
     private void openStats(Player viewer, String target) {
         String name = stats.getString(key(target) + ".name", target);
-        DeepChest menu = new DeepChest(msg("stats-title", "player", name), false);
-        List<String> list = categories();
-        Map<Integer, String> slots = new HashMap<>();
-        int[] layout = {10, 11, 12, 13, 14, 15, 16, 21, 22, 23};
-        for (int i = 0; i < Math.min(list.size(), layout.length); i++) {
-            String category = list.get(i);
+        StringBuilder body = new StringBuilder();
+        for (String category : categories()) {
             double value = value(target, category);
             String shown = value < 0 ? "-" : format(category, value);
-            menu.setItem(layout[i], icon(category, msg("stat-entry", "category", categoryName(category), "value", shown)), false);
-            slots.put(layout[i], category);
+            body.append(msg("stat-entry", "category", categoryName(category), "value", shown)).append('\n');
         }
-        menu.setDefaultItemHandler((fake, slot, oldItem, newItem, event) -> {
-            event.setCancelled(true);
-            String category = slots.get(slot);
-            if (category != null) {
-                viewer.removeWindow(fake);
-                getServer().getScheduler().scheduleDelayedTask(this, () -> {
-                    if (viewer.isOnline()) {
-                        openTop(viewer, category);
-                    }
-                }, 10);
-            }
-        });
-        viewer.addWindow(menu);
+        body.append('\n').append(msg("stat-click"));
+        SimpleForm form = new SimpleForm(msg("stats-title", "player", name), body.toString());
+        for (String category : categories()) {
+            form.addButton(msg("top-switch", "category", categoryName(category)), p -> openTop(p, category));
+        }
+        form.send(viewer);
     }
 
     private void openTop(Player player, String category) {

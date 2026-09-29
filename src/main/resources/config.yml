@@ -28,7 +28,7 @@ messages:
   category-balance: "Richest Players"
   stats-title: "Stats of {player}"
   stat-entry: "§f{category}: §e{value}"
-  stat-click: "§7Click to see the leaderboard"
+  stat-click: "§7Pick a category to see the leaderboard"
   top-title: "Top {category}"
   top-line: "§6#{rank} §f{player} §7- §e{value}"
   top-empty: "§7Nobody is ranked yet."
