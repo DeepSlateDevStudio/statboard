@@ -257,11 +257,8 @@ public final class StatBoard extends PluginBase implements Listener {
             String shown = value < 0 ? "-" : format(category, value);
             body.append(msg("stat-entry", "category", categoryName(category), "value", shown)).append('\n');
         }
-        body.append('\n').append(msg("stat-click"));
         SimpleForm form = new SimpleForm(msg("stats-title", "player", name), body.toString());
-        for (String category : categories()) {
-            form.addButton(msg("top-switch", "category", categoryName(category)), p -> openTop(p, category, back -> openStats(back, target)));
-        }
+        form.addButton(msg("stats-leaderboards"), this::openTopMenu);
         form.send(viewer);
     }
 
