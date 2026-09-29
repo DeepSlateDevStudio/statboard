@@ -259,12 +259,12 @@ public final class StatBoard extends PluginBase implements Listener {
         body.append('\n').append(msg("stat-click"));
         SimpleForm form = new SimpleForm(msg("stats-title", "player", name), body.toString());
         for (String category : categories()) {
-            form.addButton(msg("top-switch", "category", categoryName(category)), p -> openTop(p, category));
+            form.addButton(msg("top-switch", "category", categoryName(category)), p -> openTop(p, category, target));
         }
         form.send(viewer);
     }
 
-    private void openTop(Player player, String category) {
+    private void openTop(Player player, String category, String backTo) {
         List<Map.Entry<String, Double>> ranking = ranking(category);
         int size = Math.max(1, getConfig().getInt("leaderboard-size", 10));
         StringBuilder body = new StringBuilder();
@@ -283,10 +283,8 @@ public final class StatBoard extends PluginBase implements Listener {
         }
         body.append("\n").append(rank > 0 ? msg("top-you", "rank", rank, "value", format(category, ranking.get(rank - 1).getValue())) : msg("top-you-none"));
         SimpleForm form = new SimpleForm(msg("top-title", "category", categoryName(category)), body.toString());
-        for (String other : categories()) {
-            if (!other.equals(category)) {
-                form.addButton(msg("top-switch", "category", categoryName(other)), p -> openTop(p, other));
-            }
+        if (backTo != null) {
+            form.addButton(msg("top-back"), p -> openStats(p, backTo));
         }
         form.send(player);
     }
@@ -311,7 +309,7 @@ public final class StatBoard extends PluginBase implements Listener {
                 player.sendMessage(prefixed("unknown-category", "categories", String.join(", ", categories())));
                 return true;
             }
-            delayed(player, () -> openTop(player, category));
+            delayed(player, () -> openTop(player, category, null));
             return true;
         }
         String sub = args.length > 0 ? args[0].toLowerCase(Locale.ROOT) : "";

@@ -35,6 +35,7 @@ messages:
   top-you: "§7Your rank: §f#{rank} §7(§e{value}§7)"
   top-you-none: "§7You are not ranked yet."
   top-switch: "§b{category}"
+  top-back: "§7Back"
   hologram-title: "§6§l{category}"
   hologram-line: "§6{rank}. §f{player} §7{value}"
   hologram-empty: "§7No one yet"
